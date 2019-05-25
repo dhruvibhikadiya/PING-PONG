@@ -1,0 +1,196 @@
+import simplegui
+import random
+player_1='player-1'
+player_2='player-2'
+w=800
+h=600
+flag=0
+flag1=0
+winner=''
+y1=250
+y2=350
+y3=250
+y4=350
+u=0
+d=0
+u1=0
+d1=0
+ball=[w/2,h/2]
+s1=0
+s2=0
+x=0
+y=0
+q=30
+lst=[-3,3]
+clr=''
+vq=1
+while x==0 or y==0:
+    x=random.choice(lst)
+    y=random.choice(lst)
+
+def draw(canvas):
+    global y1,y2,y3,y4,u,d,u1,d1,x,y,ball,s1,s2,flag1,q,vq
+    canvas.draw_line([w/2,0],[w/2,h],5,'black')
+    canvas.draw_text(player_1,[170,100],30,'white')
+    canvas.draw_text("score:"+str(s1),[170,130],30,'blue')
+    canvas.draw_text(player_2,[570,100],30,'white')
+    canvas.draw_text("score:"+str(s2),[570,130],30,'red')
+    canvas.draw_line([0,0],[0,h],30,'white')
+    canvas.draw_line([w,0],[w,h],30,'white')
+    canvas.draw_line([0,y1],[0,y2],30,'blue')
+    if u==1:
+        y1-=2
+        y2-=2
+        if y1==0:
+            u=0
+    if d==1:
+        y1+=2
+        y2+=2
+        if y2==600:
+            d=0
+          
+    canvas.draw_line([w,y3],[w,y4],30,'red')
+    if u1==1:
+        y3-=2
+        y4-=2
+        if y3==0:
+            u1=0
+        
+    if d1==1:
+        y3+=2
+        y4+=2
+        if y4==600:
+            d1=0
+       
+    canvas.draw_circle(ball,25,1,'black','pink')
+    if flag==1:
+        ball[0]+=x
+        ball[1]+=y
+        if ball[0]<=15+25 or ball[0]>=785-25:
+            x=-x
+        if ball[1]<=0+25 or ball[1]>=600-25:
+            y=-y
+            
+        if ball[0]==40:
+            if ball[1]<=y1 or ball[1]>=y2:
+                s2+=1        
+                ball=[w/2,h/2]
+                x=random.choice(lst)
+                y=random.choice(lst)
+            else:
+                s1+=1        
+        if ball[0]==760:
+            if ball[1]<=y3 or ball[1]>=y4:
+                s1+=1
+                
+                ball=[w/2,h/2]
+                x=random.choice(lst)
+                y=random.choice(lst)
+            else:
+                s2+=1
+                
+        if s2%10==0 and s2!=0:
+            canvas.draw_text('nice.....',[590,300],q,'red')
+            q+=vq
+            if q>=40 or q<=30:
+                vq=-vq
+                
+        if s1%10==0 and s1!=0:
+            canvas.draw_text('nice.....',[190,300],q,'blue')
+            q+=vq
+            if q>=40 or q<=30:
+                vq=-vq
+                
+                               
+    if flag1==1:
+        canvas.draw_text(winner,[200,300],40,'white')
+        if winner!='this match is tie.....':
+            for i in range(20):
+                xx=random.randint(0,w)
+                yy=random.randint(0,h)
+                canvas.draw_circle([xx,yy],5,1,clr,clr)
+                               
+def kd(k):
+    global u,d,u1,d1
+    if k==simplegui.KEY_MAP['1']:
+        u=1
+       
+    if k==simplegui.KEY_MAP['2']:
+        d=1
+       
+    if k==simplegui.KEY_MAP['up']:
+        u1=1
+        
+    if k==simplegui.KEY_MAP['down']:
+        d1=1
+            
+def ku(k):
+    global u,d,u1,d1
+    if k==simplegui.KEY_MAP['1']:
+        u=0
+    if k==simplegui.KEY_MAP['2']:
+        d=0
+    if k==simplegui.KEY_MAP['up']:
+        u1=0
+    if k==simplegui.KEY_MAP['down']:
+        d1=0
+                
+def start():
+    global flag,flag1
+    flag=1
+    flag1=0
+
+def restart():
+    global flag,s1,s2,ball,y1,y2,y3,y4,flag1,player_1,player_2
+    flag=1
+    flag1=0
+    s1=0
+    s2=0
+    ball=[w/2,h/2]
+    y1=250
+    y2=350
+    y3=250
+    y4=350
+    player_1='player-1'
+    player_2='player-2'
+       
+def stop():
+    global flag,ball,flag1,winner,clr
+    if flag==1:
+        flag=0
+        flag1=1
+        if s1>s2:
+            winner=player_1+' is won the game....'
+            clr='blue'
+        if s2>s1:
+            winner=player_2+' is won the game....'
+            clr='red'
+        if s1==s2:
+            winner='this match is tie.....'
+                                    
+def player1(p1):
+    global player_1
+    player_1=p1
+
+def player2(p2):
+    global player_2
+    player_2=p2
+                       
+frame=simplegui.create_frame('dhruvi',w,h)
+frame.start()
+frame.set_canvas_background('green')
+frame.set_draw_handler(draw)
+frame.add_label("##click the button to play the game##",200)
+frame.add_button('play',start)
+frame.add_button('restart',restart)
+frame.add_button('stop',stop)
+frame.add_label("## press up&down key for player-1 ",175)
+frame.add_label("## press 1&2 key for player-2",225)
+frame.add_label("",175)
+frame.set_keydown_handler(kd)
+frame.set_keyup_handler(ku)
+frame.add_input('player-1',player1,100)
+frame.add_input('player-2',player2,100)
+
+
+
